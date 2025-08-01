@@ -9,32 +9,55 @@ WHERE libelle_categorie = "livraison";
 
 ## 2) Etablir la liste des notes des clients sur les réseaux sociaux sur les TV
 ```sql
-SELECT r.note
+SELECT r.cle_retour_client, r.note, r.libelle_source, p.titre_produit 
 FROM retour_client r
 JOIN produit p ON r.cle_produit = p.cle_produit
 WHERE LOWER(r.libelle_source) = "réseaux sociaux" 
-AND LOWER(p.titre_produit) = "TV"; --Ici, LOWER sert à s'assurer qu'on prendra toutes les mentions à TV peu importe comment elles sont écrites (tv, Tv, tV, TV) en les ramenant toutes à "tv".
+AND LOWER(p.titre_produit) = "tv"; --Ici, LOWER sert à s'assurer qu'on prendra toutes les mentions à TV peu importe comment elles sont écrites (tv, Tv, tV, TV) en les ramenant toutes à "tv".
 ```
 
-## 3) Lister le nom des régions de France
+## 3) Calculer la note moyenne pour chaque catégorie de produit (Ordre décroissant)
 ```sql
-SELECT DISTINCT reg_nom
-FROM region;
+SELECT ROUND(AVG(r.note),2) AS note_moyenne, p.typologie_produit
+FROM retour_client r
+JOIN produit p ON r.cle_produit = p.cle_produit
+GROUP BY p.typologie_produit
+ORDER BY note_moyenne DESC;
 ```
 
-## 4) Combien existe-t-il de contrats sur les résidences principales ?
+## 4) Déterminer les 5 magasins avec les meilleures notes moyennes
 ```sql
-SELECT COUNT(DISTINCT contrat_ID) AS nb_contrats_rp
-FROM contrat
-WHERE type_contrat = "Residence principale";
+SELECT
+  rmag.ref_magasin,
+  rmag.libelle_de_commune,
+  rmag.departement,
+  ROUND(AVG(r.note),2) AS note_moyenne_magasin  
+FROM retour_client r
+JOIN ref_magasin rmag ON r.ref_magasin = rmag.ref_magasin
+GROUP BY rmag.ref_magasin, rmag.libelle_de_commune, rmag.departement
+ORDER BY note_moyenne_magasin DESC
+LIMIT 5;
 ```
 
-## 5) Quelle est la surface moyenne des logements avec un contrat à Paris 
+## 5) Déterminer les magasins qui ont plus de 12 feedbacks sur le drive 
 ```sql
-SELECT AVG(surface) AS moyenne_surface_paris
-FROM contrat
-WHERE commune LIKE "PARIS%";  ## On aurait aussi pu filtrer avec WHERE code_departement = '75'
+SELECT
+  rmag.ref_magasin,
+  rmag.libelle_de_commune,
+  rmag.departement,
+  COUNT(r.note) AS nb_feedbacks  
+FROM retour_client r
+JOIN ref_magasin rmag ON r.ref_magasin = rmag.ref_magasin
+WHERE LOWER(r.libelle_categorie) = "drive"
+GROUP BY rmag.ref_magasin, rmag.libelle_de_commune, rmag.departement
+HAVING nb_feedbacks > 12;
 ```
+
+
+
+
+
+
 
 ## 6) Quels sont les 5 contrats avec les surfaces les plus élevées ?
 ```sql
