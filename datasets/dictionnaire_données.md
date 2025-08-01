@@ -36,4 +36,4 @@
 
 ## Schéma des données 
 
-![Schéma des données](Projet_SQL_2---BestMarket/images/schema_donnees.png)
+![Schéma des données](../images/schema_donnees.png)
