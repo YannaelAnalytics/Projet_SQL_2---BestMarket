@@ -12,7 +12,7 @@
 ## Table : `ref_magasin`
 
 | Champ                 | Type   | Taille | Contrainte   | Description                            |
-|-----------------------|--------|--------|--------------|-----------------  ---------------------|
+|-----------------------|--------|--------|--------------|----------------------------------------|
 | `ref_magasin`         | INT    |        | Clé Primaire | Identifiant unique pour chaque magasin |
 | `departement`         | INT    |        |              | Code du département                    |
 | `departement_commune` | CHAR   | 25     |              | Code INSEE de la commune               |
