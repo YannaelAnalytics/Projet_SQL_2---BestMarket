@@ -1,18 +1,19 @@
 ## Requêtes du Projet
 
-## 1) Lister les numéros de contrats (contrat_ID) avec leur surface pour la commune de Caen
+## 1) Calculer le nombre de retours clients sur la livraison
 ```sql
-SELECT contrat_ID, Surface
-FROM contrat
-WHERE commune = "CAEN";
+SELECT COUNT (DISTINCT cle_retour_client) AS nb_retours_livraison
+FROM retour_client
+WHERE libelle_categorie = "livraison";
 ```
 
-## 2) Lister les numéros de contrat avec le type de contrat et leur formule pour les maisons du département de la Saône-et-Loire (Département 71)
+## 2) Etablir la liste des notes des clients sur les réseaux sociaux sur les TV
 ```sql
-SELECT contrat_ID, formule
-FROM contrat
-WHERE type_local = "Maison"
-AND code_departement = "71";
+SELECT r.note
+FROM retour_client r
+JOIN produit p ON r.cle_produit = p.cle_produit
+WHERE LOWER(r.libelle_source) = "réseaux sociaux" 
+AND LOWER(p.titre_produit) = "TV"; --Ici, LOWER sert à s'assurer qu'on prendra toutes les mentions à TV peu importe comment elles sont écrites (tv, Tv, tV, TV) en les ramenant toutes à "tv".
 ```
 
 ## 3) Lister le nom des régions de France
