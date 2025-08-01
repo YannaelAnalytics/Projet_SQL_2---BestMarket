@@ -36,4 +36,4 @@
 
 ## Schéma des données 
 
-![Schéma des données](datasets/schema_données.png)
+![Schéma des données](schema_données.png)
