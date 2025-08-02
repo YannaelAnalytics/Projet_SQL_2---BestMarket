@@ -1,4 +1,4 @@
-# Pense-bête principes SQL
+# Pense-bête SQL
 
 ## 🧱 Ordre d’exécution logique en SQL
 
@@ -13,9 +13,19 @@
 - ORDER BY → on trie le résultat final
 - LIMIT → on limite le nombre de lignes affichées
 
-## Cas où on doit regrouper des lignes dans une catégorie qui n'existe pas dans la base de données 
+---
 
-Dans cet exemple on cherche la note moyenne des produits correspondants à des boissons. Mais problème : on n'a pas de typologie_produit = "Boisson", mais uniquement "Alimentaire". On a aussi différents titre_produit correspondant à des boissons mais ne portant pas directement la mention "boisson"(bière, soda, café, café soluble, saké...). On force donc la création d'une colonne dans le cadre de notre requête, ici "regroupement_produit" à laquelle on attribue pour seule ligne "Boissons". Sorte de GROUP BY forcé :
+## 🧱 Regrouper des lignes dans une catégorie qui n'existe pas dans la base de données 
+
+Dans cet exemple on cherche la note moyenne des produits correspondants à des boissons.
+
+Mais problème : on n'a pas de typologie_produit = "Boisson", mais uniquement "Alimentaire".
+
+On a aussi différents titre_produit correspondant à des boissons mais ne portant pas directement la mention "boisson"(bière, soda, café, café soluble, saké...).
+
+On force donc la création d'une colonne dans le cadre de notre requête, ici "regroupement_produit" à laquelle on attribue pour seule ligne "Boissons".
+
+Sorte de GROUP BY forcé :
 
 ```sql
 SELECT
