@@ -13,8 +13,10 @@ SELECT r.cle_retour_client, r.note, r.libelle_source, p.titre_produit
 FROM retour_client r
 JOIN produit p ON r.cle_produit = p.cle_produit
 WHERE LOWER(r.libelle_source) = "réseaux sociaux" 
-AND LOWER(p.titre_produit) = "tv"; --Ici, LOWER sert à s'assurer qu'on prendra toutes les mentions à TV peu importe comment elles sont écrites (tv, Tv, tV, TV) en les ramenant toutes à "tv".
+AND LOWER(p.titre_produit) = "tv";
 ```
+
+Ici, LOWER sert à s'assurer qu'on prendra toutes les mentions à TV peu importe comment elles sont écrites (tv, Tv, tV, TV) en les ramenant toutes à "tv".
 
 ## 3) Calculer la note moyenne pour chaque catégorie de produit (Ordre décroissant)
 ```sql
