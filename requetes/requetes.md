@@ -73,8 +73,10 @@ FROM retour_client r
 JOIN produit p ON r.cle_produit = p.cle_produit
 WHERE LOWER(r.libelle_categorie) = "service après-vente"
 GROUP BY p.typologie_produit
-ORDER BY note_moyenne_sav DESC; -- Si on ne veut que la catégorie qui a la meilleure notre, on rajoute la ligne "LIMIT 1", mais j'ai préféré un classement de l'ensemble
+ORDER BY note_moyenne_sav DESC;
 ```
+
+Si on ne veut que la catégorie qui a la meilleure notre, on rajoute la ligne "LIMIT 1", mais j'ai préféré un classement de l'ensemble.
 
 ## 8) Note moyenne sur l'ensemble des boissons
 ```sql
@@ -93,38 +95,66 @@ WHERE LOWER(p.titre_produit) LIKE "%boisson%"
 On n'a pas de typologie_produit = "Boisson", mais uniquement "Alimentaire". On a aussi différents titre_produit correspondant à des boissons mais ne portant pas directement la mention "boisson"(bière, soda, café, café soluble, saké...). On force donc la création d'une colonne dans le cadre de notre requête, ici "regroupement_produit" à laquelle on attribue pour seule ligne "Boissons". 
 
 
-## 9) Quels sont les 10 départements où le prix moyen de la cotisation est le plus élevé ?
+## 9) Classement des jours de la semaine où l'expérience en magasin est la meilleure
 ```sql
-SELECT r.dep_nom, r.dep_code, AVG(c.prix_cotisation_mensuel) AS moyenne_prix_dpt
-FROM contrat c 
-JOIN region r ON c.code_postal = r.code_postal
-GROUP BY r.dep_nom, r.dep_code
-ORDER BY moyenne_prix_dpt DESC
-LIMIT 10;
+SELECT
+  strftime("%w", r.date_achat) AS jour_de_la_semaine,
+  ROUND(AVG(r.note),2) AS note_moyenne_jour  
+FROM retour_client r
+WHERE LOWER(r.libelle_categorie) = "expérience en magasin"
+GROUP BY jour_de_la_semaine
+ORDER BY note_moyenne_jour DESC;
+```
+A savoir que dans notre table de résultats le jour 0 est le dimanche et le lundi est le 1.
+
+## 10) Sur quel mois a-t-on le plus de retours sur le SAV ?
+```sql
+SELECT
+  strftime("%m", r.date_achat) AS mois_retour,
+  COUNT(DISTINCT r.cle_retour_client) AS nb_retours_sav  
+FROM retour_client r
+WHERE LOWER(r.libelle_categorie) = "service après-vente"
+GROUP BY mois_retour
+ORDER BY nb_retours_sav DESC;
+```
+Si on veut uniquement le mois avec le plus grand nombre de retour, rajouter une ligne "LIMIT 1;" en fin de requête. 
+
+## 11) Déterminer le pourcentage de recommandations client
+```sql
+SELECT 
 ```
 
-## 10) Quel est le nombre de contrats avec des formules "Integral" pour la région Pays de la Loire ?
+## 12) Quels magasins ont une note inférieure à la moyenne des magasins ?
 ```sql
-SELECT COUNT(DISTINCT c.contrat_ID) AS nb_contrats_integral_pdl
-FROM contrat c
-JOIN region r ON c.code_postal = r.code_postal
-WHERE c.formule = "Integral"
-AND r.reg_nom = "Pays de la Loire";
+SELECT
 ```
 
-## 11) Liste des communes ayant eu au moins 150 contrats ?
+## 13) Quelles typologies de produits ont amélioré leur note moyenne entre ler et le 2ème trimestre 2021 ?
 ```sql
-SELECT commune, COUNT(DISTINCT contrat_ID) AS nb_contrats_uniques
-FROM contrat
-GROUP BY commune
-HAVING nb_contrats_uniques >= 150;
+SELECT
 ```
 
-## 12) Quel est le nombre de contrats pour chaque région ?
+## 14) Quels magasins ont une note inférieure à la moyenne des magasins ?
 ```sql
-SELECT r.reg_nom, COUNT(DISTINCT c.contrat_ID) AS nb_contrats_regions
-FROM contrat c
-JOIN region r ON c.code_postal = r.code_postal
-GROUP BY r.reg_nom;
+SELECT
 ```
 
+## 15) Calcul du NPS global (Net Promoter Score) 
+```sql
+SELECT
+```
+
+## 16) Calcul du NPS par type d'expérience client
+```sql
+SELECT
+```
+
+## 17) Quelle source de retours clients a le plus d'avis ? 
+```sql
+SELECT
+```
+
+## 18) Quelle type d'expérience client (libelle_categorie) a la meilleure note moyenne ? Quel est le taux de retour client par expérience ?
+```sql
+SELECT
+```
