@@ -88,9 +88,10 @@ WHERE LOWER(p.titre_produit) LIKE "%boisson%"
    OR LOWER(p.titre_produit) LIKE "%saké%"
    OR LOWER(p.titre_produit) LIKE "%café%"
    OR LOWER(p.titre_produit) LIKE "%bière%";
-
--- On n'a pas de typologie_produit = "Boisson", mais uniquement "Alimentaire". On a aussi différents titre_produit correspondant à des boissons mais ne portant pas directement la mention "boisson"(bière, soda, café, café soluble, saké...). On force donc la création d'une colonne dans le cadre de notre requête, ici "regroupement_produit" à laquelle on attribue pour seule ligne "Boissons". 
 ```
+
+On n'a pas de typologie_produit = "Boisson", mais uniquement "Alimentaire". On a aussi différents titre_produit correspondant à des boissons mais ne portant pas directement la mention "boisson"(bière, soda, café, café soluble, saké...). On force donc la création d'une colonne dans le cadre de notre requête, ici "regroupement_produit" à laquelle on attribue pour seule ligne "Boissons". 
+
 
 ## 9) Quels sont les 10 départements où le prix moyen de la cotisation est le plus élevé ?
 ```sql
