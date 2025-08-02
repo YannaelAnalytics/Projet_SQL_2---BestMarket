@@ -53,31 +53,43 @@ GROUP BY rmag.ref_magasin, rmag.libelle_de_commune, rmag.departement
 HAVING nb_feedbacks > 12;
 ```
 
-
-
-
-
-
-
-## 6) Quels sont les 5 contrats avec les surfaces les plus élevées ?
+## 6) Classement des départements par note
 ```sql
-SELECT contrat_ID, surface
-FROM contrat
-ORDER BY surface DESC
-LIMIT 5;
+SELECT
+  rmag.departement,
+  ROUND(AVG(r.note),2) AS note_moyenne_departement  
+FROM retour_client r
+JOIN ref_magasin rmag ON r.ref_magasin = rmag.ref_magasin
+GROUP BY rmag.departement
+ORDER BY note_moyenne_departement DESC;
 ```
 
-## 7) Quel est le prix moyen de la cotisation mensuelle ?
+## 7) Typologie de produits qui apporte le meilleur SAV
 ```sql
-SELECT AVG(prix_cotisation_mensuel) AS cotisation_moyenne
-FROM contrat;
+SELECT
+  p.typologie_produit,
+  ROUND(AVG(r.note),2) AS note_moyenne_sav  
+FROM retour_client r
+JOIN produit p ON r.cle_produit = p.cle_produit
+WHERE LOWER(r.libelle_categorie) = "service après-vente"
+GROUP BY p.typologie_produit
+ORDER BY note_moyenne_sav DESC; -- Si on ne veut que la catégorie qui a la meilleure notre, on rajoute la ligne "LIMIT 1", mais j'ai préféré un classement de l'ensemble
 ```
 
-## 8) Quel est le nombre de contrats pour chaque catégories de prix de la valeur déclarée des biens ?
+## 8) Note moyenne sur l'ensemble des boissons
 ```sql
-SELECT valeur_declaree_biens, COUNT(DISTINCT contrat_ID) AS nb_contrats_valeur
-FROM contrat
-GROUP BY valeur_declaree_biens;
+SELECT
+    "Boissons" AS regroupement_produits,
+    ROUND(AVG(r.note),2) AS note_moyenne_boissons  
+FROM retour_client r
+JOIN produit p ON r.cle_produit = p.cle_produit
+WHERE LOWER(p.titre_produit) LIKE "%boisson%"
+   OR LOWER(p.titre_produit) LIKE "%soda%"
+   OR LOWER(p.titre_produit) LIKE "%saké%"
+   OR LOWER(p.titre_produit) LIKE "%café%"
+   OR LOWER(p.titre_produit) LIKE "%bière%";
+
+-- On n'a pas de typologie_produit = "Boisson", mais uniquement "Alimentaire". On a aussi différents titre_produit correspondant à des boissons mais ne portant pas directement la mention "boisson"(bière, soda, café, café soluble, saké...). On force donc la création d'une colonne dans le cadre de notre requête, ici "regroupement_produit" à laquelle on attribue pour seule ligne "Boissons". 
 ```
 
 ## 9) Quels sont les 10 départements où le prix moyen de la cotisation est le plus élevé ?
