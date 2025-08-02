@@ -25,7 +25,7 @@ On a aussi différents titre_produit correspondant à des boissons mais ne porta
 
 On force donc la création d'une colonne dans le cadre de notre requête, ici "regroupement_produit" à laquelle on attribue pour seule ligne "Boissons".
 
-Sorte de GROUP BY forcé :
+Sorte de GROUP BY forcé qui nous donne une seule note moyenne qui correspond à tout ce qui est inclus dans notre WHERE :
 
 ```sql
 SELECT
