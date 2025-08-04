@@ -129,7 +129,7 @@ FROM (
   SELECT
     SUM(CASE WHEN r.recommandation = 1 THEN 1 ELSE 0 END) AS recommandations_positives,
     SUM(CASE WHEN r.recommandation IN(0, 1) THEN 1 ELSE 0 END) nb_recommandations_total
-     FROM retour_client r) AS sous_requete  
+     FROM retour_client r) AS sous_requete;  
 ```  
 
 ## 12) Quels magasins ont une note inférieure à la moyenne des magasins ?
@@ -143,7 +143,7 @@ CROSS JOIN (SELECT ROUND(AVG(r.note),2) AS moyenne_generale
             FROM retour_client r
             WHERE r.note IS NOT NULL) AS mg
 GROUP BY r.ref_magasin
-ORDER BY note_moyenne_magasin DESC
+ORDER BY note_moyenne_magasin DESC;
 ```
 
 Le résultat nous affiche les notes moyennes de chaque magasin classées dans l'ordre décroissant dans une colonne "note_moyenne_magasin et la moyenne générale des magasins dans la colonne "moyenne_generale". On peut garder cela si on veut pouvoir avoir une vision globale de tous les magasins et voir aussi ceux qui ont une note moyenne supérieure à la moyenne générale.
@@ -160,7 +160,7 @@ CROSS JOIN (SELECT ROUND(AVG(r.note),2) AS moyenne_generale
             WHERE r.note IS NOT NULL) AS mg
 GROUP BY r.ref_magasin
 HAVING note_moyenne_magasin < mg.moyenne_generale
-ORDER BY note_moyenne_magasin DESC
+ORDER BY note_moyenne_magasin DESC;
 ```
 
 Le CROSS JOIN nous permet d'afficher la moyenne générale des magasins sur chaque ligne pour comparaison rapide.
@@ -187,30 +187,71 @@ JOIN (
       AS t2 
 ON t1.typologie_produit = t2.typologie_produit
 WHERE t1.note_moyenne_t1 < t2.note_moyenne_t2
-ORDER BY t2.note_moyenne_t2 DESC
+ORDER BY t2.note_moyenne_t2 DESC;
 ```
 
-## 14) Quels magasins ont une note inférieure à la moyenne des magasins ?
+## 14) Calcul du NPS global (Net Promoter Score) 
+
+J'ai pu trouver 2 méthodes possibles pour ce calcul :
+
+- **Méthode 1** : multiples sous requêtes imbriquées qui permettent de décomposer le calcul des composants de la formule du NPS et de structurer le raisonnement étape par étape; 
+```sql
+SELECT taux_p.taux_promoteurs - taux_d.taux_detracteurs AS NPS
+FROM (SELECT promoteurs.nb_promoteurs*100/total.total_notes AS taux_promoteurs
+        FROM(
+             SELECT COUNT(r.note) AS total_notes
+             FROM retour_client r
+            ) AS total,
+
+            (
+             SELECT COUNT (r.note) AS nb_promoteurs
+             FROM retour_client r
+             WHERE r.note BETWEEN 9 AND 10
+            ) AS promoteurs
+     ) AS taux_p,
+
+     (SELECT detracteurs.nb_detracteurs*100/total.total_notes AS taux_detracteurs
+       FROM(
+            SELECT COUNT(r.note) AS total_notes
+            FROM retour_client r
+           ) AS total,
+
+           (
+            SELECT COUNT(r.note) AS nb_detracteurs
+            FROM retour_client r
+            WHERE r.note BETWEEN 0 AND 6
+           ) AS detracteurs
+     ) AS taux_d;
+```
+
+- **Méthode 2** : calcul du NPS en regroupant le total de retours clients, les promoteurs (notes 9–10) et les détracteurs (notes 0–6) dans une seule requête grâce à l'utilisation de CASE WHEN pour effectuer les comptages conditionnels de manière efficace;
+```sql
+SELECT ROUND((nb_promoteurs*100/total_notes) - (nb_detracteurs*100/total_notes),2) AS NPS
+FROM (
+      SELECT
+      COUNT(*) AS total_notes,
+      SUM(CASE WHEN r.note >=9 THEN 1 ELSE 0 END) AS nb_promoteurs,
+      SUM(CASE WHEN r.note <=6 THEN 1 ELSE 0 END) AS nb_detracteurs
+      FROM retour_client r
+      WHERE r.note IS NOT NULL
+      ) AS calcul;
+``` 
+
+On préfèrera la méthode 2 car elle est plus rapide à mettre en oeuvre et limite le risque d'erreur ou de se perdre dans les sous-requêtes.
+
+Finalement, le NPS global est de 31. Si le NPS est supérieur à 0 c'est que le nombre de clients satisfaits (promoteurs) est majoritaire donc que le niveau de saatisfaction est bon.
+
+## 15) Calcul du NPS par type d'expérience client
 ```sql
 SELECT
 ```
 
-## 15) Calcul du NPS global (Net Promoter Score) 
+## 16) Quelle source de retours clients a le plus d'avis ? 
 ```sql
 SELECT
 ```
 
-## 16) Calcul du NPS par type d'expérience client
-```sql
-SELECT
-```
-
-## 17) Quelle source de retours clients a le plus d'avis ? 
-```sql
-SELECT
-```
-
-## 18) Quelle type d'expérience client (libelle_categorie) a la meilleure note moyenne ? Quel est le taux de retour client par expérience ?
+## 17) Quelle type d'expérience client (libelle_categorie) a la meilleure note moyenne ? Quel est le taux de retour client par expérience ?
 ```sql
 SELECT
 ```
