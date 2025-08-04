@@ -5,7 +5,8 @@
 ### Voici l’ordre logique dans lequel SQL exécute une requête :
 
 - FROM → de quelle table viennent les données
-- JOIN → on effectue une jointure pour ajouter des champs d'une autre table
+- JOIN → on effectue une jointure pour ajouter des champs d'une autre table. Plusieurs types de jointures ici :
+   - CROSS JOIN : permet de créer une sous-reqûete afin d'associer chaque ligne d’une table à toutes les lignes d’une autre (utile pour ajouter une valeur unique comme une moyenne globale à chaque ligne du résultat) --> Ex : FROM table1 CROSS JOIN (SELECT ...) AS moyenne
 - WHERE → filtre les lignes non agrégées (les lignes brutes, donc pas d'alias)
 - GROUP BY → regroupe les lignes si je fais des calculs par groupe
 - HAVING → on filtre les groupes après agrégation, donc les alias
