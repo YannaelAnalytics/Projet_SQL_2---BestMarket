@@ -2,7 +2,8 @@
 
 ## 1) Calculer le nombre de retours clients sur la livraison
 ```sql
-SELECT COUNT (DISTINCT cle_retour_client) AS nb_retours_livraison
+SELECT
+  COUNT(DISTINCT cle_retour_client) AS nb_retours_livraison
 FROM retour_client
 WHERE libelle_categorie = "livraison";
 ```
@@ -28,7 +29,9 @@ Le nombre de retours sur les TV s'élève à 4 avec des notes allant de 8 à 10.
 
 ## 3) Calculer la note moyenne pour chaque typologie de produit (Ordre décroissant)
 ```sql
-SELECT ROUND(AVG(r.note),2) AS note_moyenne, p.typologie_produit
+SELECT
+  ROUND(AVG(r.note),2) AS note_moyenne,
+  p.typologie_produit
 FROM retour_client r
 JOIN produit p ON r.cle_produit = p.cle_produit
 GROUP BY p.typologie_produit
@@ -156,8 +159,9 @@ Si on veut uniquement le mois avec le plus grand nombre de retours, rajouter une
 
 ## 11) Déterminer le pourcentage de recommandations client
 ```sql
-SELECT  ROUND(recommandations_positives*100/nb_recommandations_total, 2) AS taux_recommandation,
-        nb_recommandations_total
+SELECT
+  ROUND(recommandations_positives*100/nb_recommandations_total, 2) AS taux_recommandation,
+  nb_recommandations_total
 FROM (
   SELECT
     SUM(CASE WHEN r.recommandation = 1 THEN 1 ELSE 0 END) AS recommandations_positives,
@@ -234,27 +238,33 @@ Cette requête permet de calculer le Net Promoter Score (NPS) pour chaque catég
 - **Méthode 1** : multiples sous requêtes imbriquées qui permettent de décomposer le calcul des composants de la formule du NPS et de structurer le raisonnement étape par étape; 
 ```sql
 SELECT taux_p.taux_promoteurs - taux_d.taux_detracteurs AS NPS
-FROM (SELECT promoteurs.nb_promoteurs*100/total.total_notes AS taux_promoteurs
+FROM (SELECT
+          promoteurs.nb_promoteurs*100/total.total_notes AS taux_promoteurs
         FROM(
-             SELECT COUNT(r.note) AS total_notes
+             SELECT
+                COUNT(r.note) AS total_notes
              FROM retour_client r
             ) AS total,
 
             (
-             SELECT COUNT (r.note) AS nb_promoteurs
+             SELECT
+                COUNT (r.note) AS nb_promoteurs
              FROM retour_client r
              WHERE r.note BETWEEN 9 AND 10
             ) AS promoteurs
      ) AS taux_p,
 
-     (SELECT detracteurs.nb_detracteurs*100/total.total_notes AS taux_detracteurs
+     (SELECT
+          detracteurs.nb_detracteurs*100/total.total_notes AS taux_detracteurs
        FROM(
-            SELECT COUNT(r.note) AS total_notes
+            SELECT
+              COUNT(r.note) AS total_notes
             FROM retour_client r
            ) AS total,
 
            (
-            SELECT COUNT(r.note) AS nb_detracteurs
+            SELECT
+              COUNT(r.note) AS nb_detracteurs
             FROM retour_client r
             WHERE r.note BETWEEN 0 AND 6
            ) AS detracteurs
@@ -263,12 +273,13 @@ FROM (SELECT promoteurs.nb_promoteurs*100/total.total_notes AS taux_promoteurs
 
 - **Méthode 2** : calcul du NPS en regroupant le total de retours clients, les promoteurs (notes 9–10) et les détracteurs (notes 0–6) dans une seule requête grâce à l'utilisation de CASE WHEN pour effectuer les comptages conditionnels de manière efficace;
 ```sql
-SELECT ROUND((nb_promoteurs*100/total_notes) - (nb_detracteurs*100/total_notes),2) AS NPS
+SELECT
+  ROUND((nb_promoteurs*100/total_notes) - (nb_detracteurs*100/total_notes),2) AS NPS
 FROM (
       SELECT
-      COUNT(*) AS total_notes,
-      SUM(CASE WHEN r.note >=9 THEN 1 ELSE 0 END) AS nb_promoteurs,
-      SUM(CASE WHEN r.note <=6 THEN 1 ELSE 0 END) AS nb_detracteurs
+        COUNT(*) AS total_notes,
+        SUM(CASE WHEN r.note >=9 THEN 1 ELSE 0 END) AS nb_promoteurs,
+        SUM(CASE WHEN r.note <=6 THEN 1 ELSE 0 END) AS nb_detracteurs
       FROM retour_client r
       WHERE r.note IS NOT NULL
       ) AS calcul;
@@ -302,7 +313,9 @@ Toutes les catégories de services ont des NPS positifs. Celle qui a le meilleur
 
 ## 16) Quelle source de retours clients comptabilise le plus d'avis ? 
 ```sql
-SELECT r.libelle_source, COUNT(DISTINCT r.cle_retour_client) AS nombre_de_retours
+SELECT
+  r.libelle_source,
+  COUNT(DISTINCT r.cle_retour_client) AS nombre_de_retours
 FROM retour_client r
 GROUP BY r.libelle_source
 ORDER BY nombre_de_retours DESC;
