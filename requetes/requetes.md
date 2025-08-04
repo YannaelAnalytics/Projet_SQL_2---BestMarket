@@ -163,9 +163,31 @@ HAVING note_moyenne_magasin < mg.moyenne_generale
 ORDER BY note_moyenne_magasin DESC
 ```
 
+Le CROSS JOIN nous permet d'afficher la moyenne générale des magasins sur chaque ligne pour comparaison rapide.
+
 ## 13) Quelles typologies de produits ont amélioré leur note moyenne entre ler et le 2ème trimestre 2021 ?
 ```sql
-SELECT
+SELECT 
+    t1.typologie_produit AS typologie_produit,
+    t1.note_moyenne_t1, 
+    t2.note_moyenne_t2
+FROM (
+      SELECT p.typologie_produit, ROUND(AVG(r.note),2) AS note_moyenne_t1
+      FROM retour_client r
+      JOIN produit p on p.cle_produit = r.cle_produit
+      WHERE r.date_achat BETWEEN "2021-01-01" AND "2021-03-31"
+      GROUP BY p.typologie_produit
+      ) AS t1
+JOIN (
+      SELECT p.typologie_produit, ROUND(AVG(r.note), 2) AS note_moyenne_t2
+      FROM retour_client r
+      JOIN produit p on p.cle_produit=r.cle_produit
+      WHERE r.date_achat BETWEEN "2021-04-01" AND "2021-07-31" 
+      GROUP BY p.typologie_produit)
+      AS t2 
+ON t1.typologie_produit = t2.typologie_produit
+WHERE t1.note_moyenne_t1 < t2.note_moyenne_t2
+ORDER BY t2.note_moyenne_t2 DESC
 ```
 
 ## 14) Quels magasins ont une note inférieure à la moyenne des magasins ?
