@@ -123,8 +123,14 @@ Si on veut uniquement le mois avec le plus grand nombre de retour, rajouter une 
 
 ## 11) Déterminer le pourcentage de recommandations client
 ```sql
-SELECT 
-```
+SELECT  ROUND(recommandations_positives*100/nb_recommandations_total, 2) AS taux_recommandation,
+        nb_recommandations_total
+FROM (
+  SELECT
+    SUM(CASE WHEN r.recommandation = 1 THEN 1 ELSE 0 END) AS recommandations_positives,
+    SUM(CASE WHEN r.recommandation IN(0, 1) THEN 1 ELSE 0 END) nb_recommandations_total
+     FROM retour_client r) AS sous_requete  
+```  
 
 ## 12) Quels magasins ont une note inférieure à la moyenne des magasins ?
 ```sql
