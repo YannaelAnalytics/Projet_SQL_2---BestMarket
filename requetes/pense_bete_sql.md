@@ -29,14 +29,14 @@
   LEFT OUTTER JOIN commandes c ON cl.id = c.client_id;
   ```
 
- - RIGHT OUTTER JOIN : Garde toutes les lignes de la table de droite, même sans correspondance à gauche. Mêmes usages que LEFT JOIN mais dans l’autre sens (commandes sans id client associé, donc clients sans inscriptions) :
+  - RIGHT OUTTER JOIN : Garde toutes les lignes de la table de droite, même sans correspondance à gauche. Mêmes usages que LEFT JOIN mais dans l’autre sens (commandes sans id client associé, donc clients sans inscriptions) :
    ```sql
    SELECT *
    FROM commandes c
    RIGHT OUTTER JOIN clients cl ON cl.id = c.client_id;
    ```
 
-- FULL OUTER JOIN : Garde toutes les lignes des deux tables, avec NULL là où il n’y a pas de correspondance. Pratique pour comparer ou fusionner deux jeux de données sans rien perdre.
+  - FULL OUTER JOIN : Garde toutes les lignes des deux tables, avec NULL là où il n’y a pas de correspondance. Pratique pour comparer ou fusionner deux jeux de données sans rien perdre.
   ```sql
   SELECT *
   FROM clients cl
