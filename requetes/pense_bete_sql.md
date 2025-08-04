@@ -16,11 +16,11 @@
      ```
      
   - INNER JOIN : Ne garde que les lignes correspondantes dans les deux tables. Utilisé quand on veut uniquement les données présentes dans les deux tables (ex tous les clients qui ont des commandes correspondantes) :
-   ```sql
-     SELECT *  
-FROM commandes c  
-INNER JOIN clients cl ON c.client_id = cl.id;
-   ```
+     ```sql
+     SELECT *
+     FROM commandes c
+     INNER JOIN clients cl ON c.client_id = cl.id;
+     ```
 
   - LEFT OUTTER JOIN : Garde toutes les lignes de la table de gauche, même si rien ne correspond dans celle de droite. Très utile pour voir les éléments sans correspondance, comme les clients sans commande :
   ```sql
@@ -31,17 +31,17 @@ INNER JOIN clients cl ON c.client_id = cl.id;
 
  - RIGHT OUTTER JOIN : Garde toutes les lignes de la table de droite, même sans correspondance à gauche. Mêmes usages que LEFT JOIN mais dans l’autre sens (commandes sans id client associé, donc clients sans inscriptions) :
    ```sql
-  SELECT *  
-  FROM commandes c
-  RIGHT OUTTER JOIN clients cl ON cl.id = c.client_id;
-  ```
+   SELECT *
+   FROM commandes c
+   RIGHT OUTTER JOIN clients cl ON cl.id = c.client_id;
+   ```
 
 - FULL OUTER JOIN : Garde toutes les lignes des deux tables, avec NULL là où il n’y a pas de correspondance. Pratique pour comparer ou fusionner deux jeux de données sans rien perdre.
-```sql
-SELECT *  
-FROM clients cl  
-FULL OUTER JOIN commandes c ON c.id = cl.client_id;
-```
+  ```sql
+  SELECT *
+  FROM clients cl
+  FULL OUTER JOIN commandes c ON c.id = cl.client_id;
+  ```
 
 - WHERE → filtre les lignes non agrégées (les lignes brutes, donc pas d'alias)
   
