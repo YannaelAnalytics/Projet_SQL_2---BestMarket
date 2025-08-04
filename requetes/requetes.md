@@ -135,6 +135,32 @@ FROM (
 ## 12) Quels magasins ont une note inférieure à la moyenne des magasins ?
 ```sql
 SELECT
+    r.ref_magasin,
+    ROUND(AVG(r.note),2) AS note_moyenne_magasin,
+    mg.moyenne_generale
+FROM retour_client r
+CROSS JOIN (SELECT ROUND(AVG(r.note),2) AS moyenne_generale
+            FROM retour_client r
+            WHERE r.note IS NOT NULL) AS mg
+GROUP BY r.ref_magasin
+ORDER BY note_moyenne_magasin DESC
+```
+
+Le résultat nous affiche les notes moyennes de chaque magasin classées dans l'ordre décroissant dans une colonne "note_moyenne_magasin et la moyenne générale des magasins dans la colonne "moyenne_generale". On peut garder cela si on veut pouvoir avoir une vision globale de tous les magasins et voir aussi ceux qui ont une note moyenne supérieure à la moyenne générale.
+
+Si par contre on préfère n'avoir que les magasins avec une note moyenne inférieure à la note moyenne générale dans notre vue, on rajoutera un HAVING :
+```sql
+SELECT
+    r.ref_magasin,
+    ROUND(AVG(r.note),2) AS note_moyenne_magasin,
+    mg.moyenne_generale
+FROM retour_client r
+CROSS JOIN (SELECT ROUND(AVG(r.note),2) AS moyenne_generale
+            FROM retour_client r
+            WHERE r.note IS NOT NULL) AS mg
+GROUP BY r.ref_magasin
+HAVING note_moyenne_magasin < mg.moyenne_generale
+ORDER BY note_moyenne_magasin DESC
 ```
 
 ## 13) Quelles typologies de produits ont amélioré leur note moyenne entre ler et le 2ème trimestre 2021 ?
