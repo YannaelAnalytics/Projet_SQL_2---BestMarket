@@ -88,14 +88,14 @@ GROUP BY rmag.departement
 ORDER BY note_moyenne_departement DESC;
 ```
 Le classement est le suivant : 
-1 - 95 : 8,14
-2 - 75 : 8,11
-3 - 94 : 8,06 
-4 - 91 : 8,05
-5 - 77 : 8,04
-6 - 92 : 8,03
-7 - 78 : 8,02
-8 - 93 : 7,94
+1 - 95 : 8,14 / 
+2 - 75 : 8,11 / 
+3 - 94 : 8,06 / 
+4 - 91 : 8,05 / 
+5 - 77 : 8,04 / 
+6 - 92 : 8,03 / 
+7 - 78 : 8,02 / 
+8 - 93 : 7,94 / 
 
 Une bonne satisfaction globale car peu de disparités des notes moyennes par département.
 
@@ -168,7 +168,7 @@ FROM (
     SUM(CASE WHEN r.recommandation IN(0, 1) THEN 1 ELSE 0 END) nb_recommandations_total
      FROM retour_client r) AS sous_requete;  
 ```  
-Le taux de recommandation client (réponse positive à la question "TRecommanderiez-vous ce magasin ?") est de 90% sur un total de 2326 retours.
+Le taux de recommandation client (réponse positive à la question "Recommanderiez-vous ce magasin ?") est de 90% sur un total de 2326 retours.
 
 ## 12) Quels magasins ont une note inférieure à la moyenne des magasins ?
 ```sql
